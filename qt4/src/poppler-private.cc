@@ -245,7 +245,7 @@ namespace Debug {
     void DocumentData::init()
     {
         m_fontInfoIterator = 0;
-        m_backend = Document::SplashBackend;
+        m_backend = Document::CairoBackend;
         paperColor = Qt::white;
         m_hints = 0;
         m_optContentModel = 0;

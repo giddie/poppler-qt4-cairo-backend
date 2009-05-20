@@ -887,7 +887,8 @@ delete it;
 	*/
 	enum RenderBackend {
 	    SplashBackend,   ///< Splash backend
-	    ArthurBackend   ///< Arthur (Qt4) backend
+	    ArthurBackend,   ///< Arthur (Qt4) backend
+	    CairoBackend     ///< Cairo backend
 	};
 
 	/**

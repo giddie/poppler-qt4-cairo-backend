@@ -8,6 +8,11 @@ include_directories(
   ${QT4_INCLUDE_DIR}
 )
 
+if (HAVE_CAIRO)
+  include_directories(${CAIRO_INCLUDE_DIRS})
+  add_definitions(${CAIRO_CFLAGS})
+endif (HAVE_CAIRO)
+
 macro(QT4_ADD_SIMPLETEST exe source)
   string(REPLACE "-" "" test_name ${exe})
   set(${test_name}_SOURCES

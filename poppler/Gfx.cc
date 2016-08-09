@@ -4608,6 +4608,62 @@ void Gfx::doImage(Object *ref, Stream *str, GBool inlineImg) {
   error(errSyntaxError, getPos(), "Bad image parameters");
 }
 
+GBool Gfx::checkNormalBlendModeOnly(Object *str) {
+  printf("check blender mode start\n");
+  char *cmd;
+  Object obj;
+  Object args[maxArgs];
+  int numArgs, i;
+  GBool onlyNormalBlendMode;
+  Parser myParser(xref, new Lexer(xref, str), gFalse);
+
+  numArgs = 0;
+  onlyNormalBlendMode = gTrue;
+
+  myParser.getObj(&obj);
+  while (!obj.isEOF()) {
+    if (obj.isCmd()) {
+      cmd = obj.getCmd();
+
+      if (strcmp(cmd, "gs") == 0) {
+        Object obj1, obj2;
+        GfxBlendMode mode;
+        if (res->lookupGState(args[0].getName(), &obj1)) {
+          if (!obj1.dictLookup("BM", &obj2)->isNull()) {
+            if (state->parseBlendMode(&obj2, &mode)) {
+              printf("check blend mode: %d\n", mode);
+              onlyNormalBlendMode &= (mode == gfxBlendNormal);
+            }
+          }
+          obj2.free();
+        }
+        obj1.free();
+      }
+      obj.free();
+
+      for (i = 0; i < numArgs; ++i)
+	args[i].free();
+      numArgs = 0;
+
+    } else if (numArgs < maxArgs) {
+      args[numArgs++] = obj;
+    } else {
+      obj.free();
+    }
+
+    myParser.getObj(&obj);
+  }
+  obj.free();
+
+  if (numArgs > 0) {
+    for (i = 0; i < numArgs; ++i)
+      args[i].free();
+  }
+
+  return onlyNormalBlendMode;
+}
+
+
 GBool Gfx::checkTransparencyGroup(Dict *resDict) {
   // check the effect of compositing objects as a group:
   // look for ExtGState entries with ca != 1 or CA != 1 or BM != normal

@@ -2419,3 +2419,13 @@ poppler_page_get_text_attributes_for_area (PopplerPage      *page,
 
   return g_list_reverse(attributes);
 }
+
+gboolean
+poppler_page_support_subpixel_rendering (PopplerPage        *page)
+{
+  CairoOutputDev *output_dev;
+  g_return_val_if_fail (POPPLER_IS_PAGE (page), FALSE);
+
+  output_dev = page->document->output_dev;
+  return page->page->supportSubpixelRendering(output_dev);
+}

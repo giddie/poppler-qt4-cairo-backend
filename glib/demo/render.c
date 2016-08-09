@@ -82,12 +82,14 @@ pgd_render_start (GtkButton     *button,
 		  PgdRenderDemo *demo)
 {
 	PopplerPage *page;
+	gboolean     subpixel_rendering;
 	gdouble      page_width, page_height;
 	gdouble      width, height;
 	gint         x, y;
 	gchar       *str;
 	GTimer      *timer;
         cairo_t     *cr;
+        cairo_font_options_t *fo;
 
 	page = poppler_document_get_page (demo->doc, demo->page);
 	if (!page)
@@ -116,6 +118,21 @@ pgd_render_start (GtkButton     *button,
                                                     width, height);
         cr = cairo_create (demo->surface);
 
+        fo = cairo_font_options_create ();
+        cairo_get_font_options (cr, fo);
+
+        subpixel_rendering = poppler_page_support_subpixel_rendering (page);
+        printf("subpixel_rendering %d\n", subpixel_rendering);
+        if (subpixel_rendering) {
+                cairo_set_source_rgb (cr, 1., 1., 1.);
+                cairo_paint (cr);
+                cairo_font_options_set_antialias (fo, CAIRO_ANTIALIAS_SUBPIXEL);
+                cairo_font_options_set_subpixel_order (fo, CAIRO_SUBPIXEL_ORDER_RGB);
+        }
+
+        cairo_set_font_options (cr, fo);
+        cairo_font_options_destroy (fo);
+
         cairo_save (cr);
         switch (demo->rotate) {
         case 90:
@@ -143,9 +160,11 @@ pgd_render_start (GtkButton     *button,
                 poppler_page_render (page, cr);
         cairo_restore (cr);
 
-        cairo_set_operator (cr, CAIRO_OPERATOR_DEST_OVER);
-        cairo_set_source_rgb (cr, 1., 1., 1.);
-        cairo_paint (cr);
+        if (!subpixel_rendering) {
+                cairo_set_operator (cr, CAIRO_OPERATOR_DEST_OVER);
+                cairo_set_source_rgb (cr, 1., 1., 1.);
+                cairo_paint (cr);
+        }
 
         g_timer_stop (timer);
 

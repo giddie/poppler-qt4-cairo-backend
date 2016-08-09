@@ -348,6 +348,20 @@ Dict *Page::getResourceDictCopy(XRef *xrefA) {
   return dict ? dict->copy(xrefA) : NULL;
 }
 
+GBool Page::supportSubpixelRendering(OutputDev *out) {
+  GBool supported = gFalse;
+  Object obj;
+  PDFRectangle box;
+
+  contents.fetch(xref, &obj);
+  if (!obj.isNull()) {
+    Gfx gfx(doc, out, attrs->getResourceDict(), &box, NULL);
+    supported = gfx.checkNormalBlendModeOnly(&obj);
+  }
+  obj.free();
+  return supported;
+}
+
 void Page::replaceXRef(XRef *xrefA) {
   Object obj1;
   Dict *pageDict = pageObj.getDict()->copy(xrefA);

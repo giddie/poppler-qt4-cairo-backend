@@ -132,7 +132,7 @@ CairoFont::getSubstitutionCorrection(GfxFont *gfxFont)
 	cairo_matrix_t m;
 	cairo_matrix_init_identity(&m);
 	cairo_font_options_t *options = cairo_font_options_create();
-	cairo_font_options_set_hint_style(options, CAIRO_HINT_STYLE_NONE);
+	cairo_font_options_set_hint_style(options, CAIRO_HINT_STYLE_SLIGHT);
 	cairo_font_options_set_hint_metrics(options, CAIRO_HINT_METRICS_OFF);
 	cairo_scaled_font_t *scaled_font = cairo_scaled_font_create(cairo_font_face, &m, &m, options);
 
@@ -190,7 +190,7 @@ _ft_new_face_uncached (FT_Library lib,
   }
 
   font_face = cairo_ft_font_face_create_for_ft_face (face,
-							  FT_LOAD_NO_HINTING |
+							  FT_LOAD_TARGET_LIGHT |
 							  FT_LOAD_NO_BITMAP);
   if (cairo_font_face_set_user_data (font_face,
 				     &_ft_cairo_key,
@@ -359,7 +359,7 @@ _ft_new_face (FT_Library lib,
   _ft_open_faces = l;
 
   l->font_face = cairo_ft_font_face_create_for_ft_face (tmpl.face,
-							  FT_LOAD_NO_HINTING |
+							  FT_LOAD_TARGET_LIGHT |
 							  FT_LOAD_NO_BITMAP);
   if (cairo_font_face_set_user_data (l->font_face,
 				     &_ft_cairo_key,

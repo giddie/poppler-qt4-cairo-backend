@@ -186,6 +186,9 @@ public:
   // Get the current graphics state object.
   GfxState *getState() { return state; }
 
+  // Check whether a stream only contains normal blend mode (to enable subpixel rendering)
+  GBool checkNormalBlendModeOnly(Object *str);
+
   GBool checkTransparencyGroup(Dict *resDict);
 
   void drawForm(Object *str, Dict *resDict, double *matrix, double *bbox,
